@@ -1,0 +1,197 @@
+import { Injectable, ConflictException, UnauthorizedException } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
+import { Founder, FounderDocument } from './entities/founder.entity';
+import { CreateFounderDto } from './dto/create-founder.dto';
+import * as bcrypt from 'bcrypt';
+import { FounderResponse } from './types/founder-response';
+import * as jwt from 'jsonwebtoken';
+import { ConfigService } from '@nestjs/config';
+import { LoginDto } from './dto/login.dto';
+import { JwtService } from '@nestjs/jwt';
+import { UpdateFounderDto } from './dto/update-founder.dto';
+
+
+@Injectable()
+export class FounderService {
+  constructor(
+    @InjectModel(Founder.name) private founderModel: Model<FounderDocument>,
+    private configService: ConfigService,
+    private jwtService: JwtService
+  ) {}
+  
+  async signup(createFounderDto: CreateFounderDto): Promise<FounderResponse> {
+    const { name, email, password, phone } = createFounderDto;
+
+    //Check for existing user
+    const existingEmail = await this.founderModel.findOne({ email});
+    if (existingEmail) {
+      throw new ConflictException('Email is already in use');
+    }
+
+    //Check for existing name
+    const existingName = await this.founderModel.findOne({ name });
+    if (existingName) {
+      throw new ConflictException('Name is already in use');
+    }
+
+    //Hash password
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    //Create founder
+    const founder = await this.founderModel.create({
+      name, 
+      email, 
+      password: hashedPassword,
+      phone
+    });
+
+    //return saved founder
+    return {
+      id: founder._id.toString(),
+      name: founder.name,
+      email:founder.email,
+      createdAt: founder.createdAt,
+    }
+  }
+
+  async login(loginDto: LoginDto) {
+    const { email, password } = loginDto;
+      
+    const user = await this.founderModel.findOne({ email });
+
+    if (!user) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+      
+    const isPasswordValid = await bcrypt.compare(password, user.password);
+
+    if (!isPasswordValid) {
+      throw new UnauthorizedException('Invalid credentials');
+    }
+  
+    const jwtSecret = this.configService.get<string>('JWT_SECRET');
+
+    if (!jwtSecret) {
+      throw new UnauthorizedException('JWT configuration error');
+    }
+  
+    const token = jwt.sign(
+      { userId: user._id, email: user.email },
+      jwtSecret,
+      { expiresIn: '24h' }
+    );
+  
+    return {
+      token,
+      user: {
+        id: user._id,
+        name: user.name,
+        email: user.email,
+      },
+    };
+  }
+  
+  async getUserProfile(userId: string) {
+    const user = await this.founderModel.findById(userId).select('-password');
+
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    return user;       
+  }
+
+  async updateProfile(userId: string, updateFounderDto: UpdateFounderDto): Promise<FounderResponse> {
+    const { name, email, phone, password } = updateFounderDto;
+
+    const user = await this.founderModel.findById(userId);
+    if (!user) {
+      throw new UnauthorizedException('User not found');
+    }
+
+    // Check for duplicate email
+    if (email && email !== user.email) {
+      const existingEmail = await this.founderModel.findOne({ email });
+      if (existingEmail) {
+        throw new ConflictException('Email is already in use');
+      }
+      user.email = email;
+    }
+
+    // Check for duplicate name
+    if (name && name !== user.name) {
+      const existingName = await this.founderModel.findOne({ name });
+      if (existingName) {
+        throw new ConflictException('Name is already in use');
+      }
+      user.name = name;
+    }
+
+    if (phone) {
+      user.phone = phone;
+    }
+
+    if (password) {
+      user.password = await bcrypt.hash(password, 10);
+    }
+
+    const updatedUser = await user.save();
+
+    return {
+      id: updatedUser._id.toString(),
+      name: updatedUser.name,
+      email: updatedUser.email,
+      createdAt: updatedUser.createdAt,
+    };
+  }
+
+  async socialLogin(provider: string) {
+    const jwtSecret = this.configService.get<string>('JWT_SECRET');
+
+    if (!jwtSecret) {
+      throw new UnauthorizedException('JWT configuration error');
+    }
+
+    const mockUser = {
+      _id: 'social_user_id',
+      name: `${provider} User`,
+      email: `user@${provider}.com`,
+    };
+
+    const token = this.jwtService.sign({
+      userId: mockUser._id,
+      email: mockUser.email,
+    });
+
+    return {
+      token,
+      user: mockUser,
+    };
+  }
+
+
+  async socialSignup(provider: string) {
+    const jwtSecret = this.configService.get<string>('JWT_SECRET');
+
+    if (!jwtSecret) {
+      throw new UnauthorizedException('JWT configuration error');
+    }
+
+    const mockUser = {
+      _id: 'social_signup_id',
+      name: `${provider} New User`,
+      email: `newuser@${provider}.com`,
+    };
+
+    const token = this.jwtService.sign({
+      userId: mockUser._id,
+      email: mockUser.email,
+    });
+
+    return {
+      token,
+      user: mockUser,
+    };
+  }
+}
