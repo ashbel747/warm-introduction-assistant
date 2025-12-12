@@ -23,11 +23,7 @@ const FormField: React.FC<{
 
     return (
         <div className="space-y-1">
-<<<<<<< HEAD
             <label htmlFor={name} className="block text-black font-medium">
-=======
-            <label htmlFor={name} className="block text-white font-medium">
->>>>>>> abb365ab13b940264d920f04550b791feba24a92
                 {label}{required && <span className="text-red-400">*</span>}
             </label>
 

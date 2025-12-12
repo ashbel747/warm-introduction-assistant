@@ -102,7 +102,7 @@ export default function TransformStep({ startup, investor, onSuccess }: Transfor
                 ) : (
                     <>
                         <Zap className="w-5 h-5" />
-                        <span>Generate Customized Introduction</span>
+                        <span className='text-white'>Generate Customized Introduction</span>
                     </>
                 )}
             </button>
