@@ -1,5 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransformService } from './transform.service';
+<<<<<<< HEAD
+
+describe('TransformService', () => {
+  let service: TransformService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [TransformService],
+    }).compile();
+
+    service = module.get<TransformService>(TransformService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+=======
 import { getModelToken } from '@nestjs/mongoose';
 import { IntroQueue } from './entities/intro-queue.schema';
 import { ReminderService } from '../scheduler/reminder.service';
@@ -194,5 +210,6 @@ describe('TransformService', () => {
       expect(intro.status).toBe('completed');
       expect(intro.save).toHaveBeenCalled();
     });
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   });
 });

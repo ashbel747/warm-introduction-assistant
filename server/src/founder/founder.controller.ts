@@ -1,7 +1,11 @@
 import { Controller, Post, Body, Get, UseGuards, Patch } from '@nestjs/common';
 import { FounderService } from './founder.service';
 import { CreateFounderDto } from './dto/create-founder.dto';
+<<<<<<< HEAD
+import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+=======
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 import { Req } from '@nestjs/common';
 import { LoginDto } from './dto/login.dto';
 import { UpdateFounderDto } from './dto/update-founder.dto';

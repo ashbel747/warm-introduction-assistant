@@ -1,4 +1,21 @@
 import { Test, TestingModule } from '@nestjs/testing';
+<<<<<<< HEAD
+import { StartupsService } from './startups.service';
+
+describe('StartupsService', () => {
+  let service: StartupsService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [StartupsService],
+    }).compile();
+
+    service = module.get<StartupsService>(StartupsService);
+  });
+
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+=======
 import { getModelToken } from '@nestjs/mongoose';
 import { NotFoundException } from '@nestjs/common';
 import { StartupsService } from './startups.service';
@@ -167,5 +184,6 @@ describe('StartupsService', () => {
     await expect(service.remove('id1', 'founder123')).rejects.toThrow(
       NotFoundException,
     );
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   });
 });

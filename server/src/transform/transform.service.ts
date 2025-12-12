@@ -3,7 +3,11 @@ import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { TransformIntroDto } from './dto/transform-intro.dto';
 import { IntroQueue, IntroQueueDocument } from './entities/intro-queue.schema';
+<<<<<<< HEAD
+import { ReminderService } from 'src/scheduler/reminder.service';
+=======
 import { ReminderService } from '../scheduler/reminder.service';
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 
 
 @Injectable()
@@ -15,6 +19,16 @@ export class TransformService {
 
   //Call GenAI endpoint for transforming intros
   async transformIntro(dto: TransformIntroDto) {
+<<<<<<< HEAD
+      console.log(" Received Transform Intro Payload:", dto);
+
+      return {
+        success: true,
+        message: "Transform intro endpoint reached successfully.",
+        received: dto,
+        dummyTransformedIntro: "This is a dummy transformed intro for testing."
+      };
+=======
     console.log("Received Transform Intro Payload:", dto);
 
     if (!dto.blurb) {
@@ -62,6 +76,7 @@ export class TransformService {
         details: error.message
       });
     }
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   }
 
   async getIntrosByFounder(founderId: string) {

@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { TransformController } from './transform.controller';
 import { TransformService } from './transform.service';
+<<<<<<< HEAD
+
+describe('TransformController', () => {
+  let controller: TransformController;
+=======
 import { TransformIntroDto } from './dto/transform-intro.dto';
 import { JwtAuthGuard } from '../guards/jwt-auth.guard';
 
@@ -21,10 +26,17 @@ describe('TransformController', () => {
   };
 
   const mockReq = { user: { userId: 'founder123' } };
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [TransformController],
+<<<<<<< HEAD
+      providers: [TransformService],
+    }).compile();
+
+    controller = module.get<TransformController>(TransformController);
+=======
       providers: [
         {
           provide: TransformService,
@@ -39,11 +51,14 @@ describe('TransformController', () => {
 
   afterEach(() => {
     jest.clearAllMocks();
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+<<<<<<< HEAD
+=======
 
   // -----------------------------
   // transformIntro
@@ -106,4 +121,5 @@ describe('TransformController', () => {
       expect(service.updateIntroStatus).toHaveBeenCalledWith('1', body.status, body.followUpDueDate);
     });
   });
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 });

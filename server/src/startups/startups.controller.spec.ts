@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { StartupsController } from './startups.controller';
 import { StartupsService } from './startups.service';
+<<<<<<< HEAD
+
+describe('StartupsController', () => {
+  let controller: StartupsController;
+=======
 import { CreateStartupDto } from './dto/create-startup.dto';
 import { UpdateStartupDto } from './dto/update-startup.dto';
 
@@ -17,10 +22,17 @@ describe('StartupsController', () => {
   };
 
   const mockReq = { user: { userId: 'founder123' } };
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [StartupsController],
+<<<<<<< HEAD
+      providers: [StartupsService],
+    }).compile();
+
+    controller = module.get<StartupsController>(StartupsController);
+=======
       providers: [
         {
           provide: StartupsService,
@@ -31,11 +43,14 @@ describe('StartupsController', () => {
 
     controller = module.get<StartupsController>(StartupsController);
     service = module.get<StartupsService>(StartupsService);
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+<<<<<<< HEAD
+=======
 
   describe('create', () => {
     it('should call service.create with correct arguments', async () => {
@@ -99,4 +114,5 @@ describe('StartupsController', () => {
       expect(service.remove).toHaveBeenCalledWith('1', 'founder123');
     });
   });
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 });

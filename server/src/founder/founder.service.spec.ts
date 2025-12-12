@@ -1,5 +1,14 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FounderService } from './founder.service';
+<<<<<<< HEAD
+
+describe('FounderService', () => {
+  let service: FounderService;
+
+  beforeEach(async () => {
+    const module: TestingModule = await Test.createTestingModule({
+      providers: [FounderService],
+=======
 import { getModelToken } from '@nestjs/mongoose';
 import { Founder } from './entities/founder.entity';
 import * as bcrypt from 'bcrypt';
@@ -49,11 +58,18 @@ describe('FounderService', () => {
         { provide: ConfigService, useValue: mockConfigService },
         { provide: JwtService, useValue: mockJwtService },
       ],
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
     }).compile();
 
     service = module.get<FounderService>(FounderService);
   });
 
+<<<<<<< HEAD
+  it('should be defined', () => {
+    expect(service).toBeDefined();
+  });
+});
+=======
   afterEach(() => {
     jest.clearAllMocks();
   });
@@ -159,3 +175,4 @@ describe('FounderService', () => {
     });
   });
 });
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92

@@ -1,6 +1,11 @@
 import { Test, TestingModule } from '@nestjs/testing';
 import { FounderController } from './founder.controller';
 import { FounderService } from './founder.service';
+<<<<<<< HEAD
+
+describe('FounderController', () => {
+  let controller: FounderController;
+=======
 import { CreateFounderDto } from './dto/create-founder.dto';
 import { LoginDto } from './dto/login.dto';
 import { UpdateFounderDto } from './dto/update-founder.dto';
@@ -25,10 +30,17 @@ const mockJwtAuthGuard = {
 describe('FounderController', () => {
   let controller: FounderController;
   let service: typeof mockFounderService;
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 
   beforeEach(async () => {
     const module: TestingModule = await Test.createTestingModule({
       controllers: [FounderController],
+<<<<<<< HEAD
+      providers: [FounderService],
+    }).compile();
+
+    controller = module.get<FounderController>(FounderController);
+=======
       providers: [
         {
           provide: FounderService,
@@ -45,11 +57,15 @@ describe('FounderController', () => {
     service = module.get(FounderService);
 
     jest.clearAllMocks();
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   });
 
   it('should be defined', () => {
     expect(controller).toBeDefined();
   });
+<<<<<<< HEAD
+});
+=======
 
   describe('Authentication Endpoints', () => {
     it('should call founderService.signup with the correct DTO', async () => {
@@ -121,3 +137,4 @@ describe('FounderController', () => {
     });
   });
 });
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92

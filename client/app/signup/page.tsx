@@ -251,15 +251,23 @@ export default function SignupPage() {
           background: #fff;
           border-radius: 16px;
           box-shadow: 0 2px 16px rgba(0, 0, 0, 0.1);
+<<<<<<< HEAD
+          padding: 2.5rem 2rem;
+          max-width: 420px;
+          width: 100%;
+=======
           padding: 1.5rem 1rem;
           max-width: 420px;
           width: 90%;
           margin: 0 1rem;
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           border: 1px solid #e5e7eb;
           display: flex;
           flex-direction: column;
           align-items: center;
         }
+<<<<<<< HEAD
+=======
         @media (min-width: 640px) {
           .signup-container {
             padding: 2.5rem 2rem;
@@ -267,11 +275,18 @@ export default function SignupPage() {
             margin: 0;
           }
         }
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
         .logo-area {
           width: 60px;
           margin-bottom: 10px;
         }
         .title {
+<<<<<<< HEAD
+          font-size: 26px;
+          font-weight: 600;
+          margin: 8px 0 2px;
+        }
+=======
           font-size: 20px;
           font-weight: 600;
           margin: 8px 0 2px;
@@ -281,6 +296,7 @@ export default function SignupPage() {
             font-size: 26px;
           }
         }
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
         .subtitle {
           font-size: 13px;
           color: #555;
@@ -297,11 +313,31 @@ export default function SignupPage() {
         input[type="email"],
         input[type="tel"],
         input[type="password"] {
+<<<<<<< HEAD
+          padding: 10px;
+=======
           padding: 12px;
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           margin-bottom: 13px;
           border: 1px solid #ced4da;
           border-radius: 6px;
           font-size: 16px;
+<<<<<<< HEAD
+        }
+        .phone-field {
+          display: flex;
+          gap: 8px;
+          margin-bottom: 13px;
+        }
+        .country-code {
+          padding: 10px 8px;
+          border: 1px solid #ced4da;
+          border-radius: 6px;
+          font-size: 16px;
+          background: #fff;
+          cursor: pointer;
+          width: 90px;
+=======
           width: 100%;
           box-sizing: border-box;
         }
@@ -332,6 +368,7 @@ export default function SignupPage() {
             font-size: 16px;
             width: 90px;
           }
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
         }
         .phone-field input {
           flex: 1;
@@ -370,6 +407,14 @@ export default function SignupPage() {
           font-weight: 600;
           border: none;
           border-radius: 6px;
+<<<<<<< HEAD
+          padding: 12px 0;
+          margin-bottom: 8px;
+          cursor: pointer;
+          font-size: 18px;
+          transition: background 0.2s;
+        }
+=======
           padding: 14px 0;
           margin-bottom: 8px;
           cursor: pointer;
@@ -382,6 +427,7 @@ export default function SignupPage() {
             font-size: 18px;
           }
         }
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
         .register-btn:hover {
           background: #003fa1;
         }
@@ -390,6 +436,13 @@ export default function SignupPage() {
           cursor: not-allowed;
         }
         .terms {
+<<<<<<< HEAD
+          font-size: 13px;
+          color: #666;
+          margin-bottom: 10px;
+          display: flex;
+          align-items: center;
+=======
           font-size: 12px;
           color: #666;
           margin-bottom: 10px;
@@ -402,6 +455,7 @@ export default function SignupPage() {
             font-size: 13px;
             align-items: center;
           }
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
         }
         .terms label {
           margin-left: 7px;

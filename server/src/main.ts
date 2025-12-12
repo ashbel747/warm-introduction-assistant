@@ -14,7 +14,10 @@ async function bootstrap() {
   app.enableCors({
     origin: [
       'http://localhost:3000',         // for local development
+<<<<<<< HEAD
+=======
       'https://warmly-intro-assistant.vercel.app', // for production
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
     ],
   });                                     
                                                                        

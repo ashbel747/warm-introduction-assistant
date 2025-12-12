@@ -103,6 +103,21 @@ export default function Footer() {
           color: #757575;
           margin-bottom: 8px;
         }
+<<<<<<< HEAD
+        @media (max-width: 700px) {
+          .footer-bg {
+            padding: 22px 3vw 0 3vw;
+          }
+          .footer-row {
+            flex-direction: column;
+            gap: 24px;
+          }
+          .footer-center {
+            margin-left: 0;
+          }
+          .footer-links-cols {
+            gap: 22px;
+=======
         @media (max-width: 768px) {
           .footer-bg {
             padding: 24px 4vw 0 4vw;
@@ -148,6 +163,7 @@ export default function Footer() {
           }
           .footer-copyright {
             font-size: 13px;
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           }
         }
       `}</style>
