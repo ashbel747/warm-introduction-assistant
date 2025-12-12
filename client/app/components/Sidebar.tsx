@@ -1,7 +1,11 @@
 "use client";
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
+<<<<<<< HEAD
 import React from "react";
+=======
+import React, { useState, useEffect } from "react";
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 import styles from "./Sidebar.module.css";
 
 const icons = {
@@ -71,6 +75,15 @@ type MenuItem = {
 };
 
 const menu: MenuItem[] = [
+<<<<<<< HEAD
+=======
+  { href: "/", label: "Home", icon: (
+    <svg width="18" height="18" viewBox="0 0 24 24" fill="none">
+      <path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+      <path d="M9 22V12h6v10" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round"/>
+    </svg>
+  ) },
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   { href: "/dashboard", label: "Dashboard", icon: icons.dashboard },
   { href: "/investors", label: "Investors", icon: icons.investors },
   { href: "/startups", label: "Startups", icon: icons.startups },
@@ -83,6 +96,24 @@ const menu: MenuItem[] = [
 const Sidebar: React.FC = () => {
   const pathname = usePathname();
   const router = useRouter();
+<<<<<<< HEAD
+=======
+  const [isMobileOpen, setIsMobileOpen] = useState(false);
+  const [isMobile, setIsMobile] = useState(false);
+
+  useEffect(() => {
+    const checkMobile = () => {
+      setIsMobile(window.innerWidth <= 768);
+      if (window.innerWidth > 768) {
+        setIsMobileOpen(false);
+      }
+    };
+    
+    checkMobile();
+    window.addEventListener('resize', checkMobile);
+    return () => window.removeEventListener('resize', checkMobile);
+  }, []);
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 
   const handleLogout = () => {
     localStorage.removeItem('token');
@@ -91,13 +122,46 @@ const Sidebar: React.FC = () => {
   };
 
   return (
+<<<<<<< HEAD
     <aside className={styles['sidebar-root']}>
+=======
+    <>
+      {/* Mobile Menu Button */}
+      {isMobile && (
+        <button
+          className="fixed top-24 left-14 z-[1001] md:hidden flex flex-col justify-center items-center w-8 h-8 space-y-1 bg-white rounded p-1 shadow-sm"
+          onClick={() => setIsMobileOpen(!isMobileOpen)}
+        >
+          <span className={`block w-6 h-0.5 bg-gray-800 transition-transform ${isMobileOpen ? 'rotate-45 translate-y-2' : ''}`}></span>
+          <span className={`block w-6 h-0.5 bg-gray-800 transition-opacity ${isMobileOpen ? 'opacity-0' : ''}`}></span>
+          <span className={`block w-6 h-0.5 bg-gray-800 transition-transform ${isMobileOpen ? '-rotate-45 -translate-y-2' : ''}`}></span>
+        </button>
+      )}
+      
+      {/* Mobile Overlay */}
+      {isMobile && isMobileOpen && (
+        <div 
+          className={`${styles['mobile-overlay']} ${isMobileOpen ? styles.show : ''}`}
+          onClick={() => setIsMobileOpen(false)}
+        />
+      )}
+      
+      <aside className={`${styles['sidebar-root']} ${isMobile && isMobileOpen ? styles['mobile-open'] : ''} ${isMobile && !isMobileOpen ? styles['mobile-closed'] : ''}`}>
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
       <div>
         <nav>
           <ul className={styles['sidebar-list']}>
             {menu.map(({ href, label, icon }) => (
               <li key={href}>
+<<<<<<< HEAD
                 <Link href={href} className={`${styles['sidebar-link']}${pathname === href ? ` ${styles.active}` : ""}`}>
+=======
+                <Link 
+                  href={href} 
+                  className={`${styles['sidebar-link']}${pathname === href ? ` ${styles.active}` : ""}`}
+                  onClick={() => isMobile && setIsMobileOpen(false)}
+                >
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
                   <span className={styles['sidebar-ico']}>{icon}</span>
                   {label}
                 </Link>
@@ -107,16 +171,39 @@ const Sidebar: React.FC = () => {
         </nav>
       </div>
       <div>
+<<<<<<< HEAD
         <Link href="/settings" className={styles['sidebar-btn']}>
           <span className={styles['sidebar-ico']}>{icons.settings}</span>
           Settings
         </Link>
         <button className={`${styles['sidebar-btn']} ${styles['sidebar-logout']}`} type="button" onClick={handleLogout}>
+=======
+        <Link 
+          href="/settings" 
+          className={styles['sidebar-btn']}
+          onClick={() => isMobile && setIsMobileOpen(false)}
+        >
+          <span className={styles['sidebar-ico']}>{icons.settings}</span>
+          Settings
+        </Link>
+        <button 
+          className={`${styles['sidebar-btn']} ${styles['sidebar-logout']}`} 
+          type="button" 
+          onClick={() => {
+            handleLogout();
+            isMobile && setIsMobileOpen(false);
+          }}
+        >
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           <span className={styles['sidebar-ico']}>{icons.logout}</span>
           <span>Log Out</span>
         </button>
       </div>
     </aside>
+<<<<<<< HEAD
+=======
+    </>
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   );
 };
 

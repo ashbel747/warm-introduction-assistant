@@ -13,10 +13,19 @@ export default function DashboardLayout({ children }: { children: React.ReactNod
   }
 
   return (
+<<<<<<< HEAD
     <div style={{ display: 'flex' }}>
       <Sidebar />
       <main style={{ flex: 1, minHeight: '100vh' }}>
         {children}
+=======
+    <div className="flex">
+      <Sidebar />
+      <main className="flex-1 min-h-screen w-full md:ml-0">
+        <div className="p-4 md:p-6">
+          {children}
+        </div>
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
       </main>
     </div>
   );

@@ -102,7 +102,11 @@ const ChatBotBox = ({ onClose }: { onClose?: () => void }) => {
                     return newMessages;
                   });
 
+<<<<<<< HEAD
                   await new Promise(res => setTimeout(res, 20));
+=======
+                  await new Promise(res => setTimeout(res, 35));
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
                 }
               } catch (e) { /* ignore JSON parsing errors */ }
             }
@@ -159,7 +163,11 @@ const ChatBotBox = ({ onClose }: { onClose?: () => void }) => {
   return (
     <div className="
         // .chatbot-box conversion
+<<<<<<< HEAD
         w-[350px] min-h-[520px] max-h-[94vh] bg-white shadow-[0_4px_32px_#23265922]
+=======
+        w-[350px] md:w-[450px] min-h-[520px] md:min-h-[600px] max-h-[94vh] bg-white shadow-[0_4px_32px_#23265922]
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
         rounded-[18px] flex flex-col fixed bottom-[34px] right-[34px] z-50
         font-['system-ui',sans-serif] overflow-hidden border-2 border-[#f2f7fe]
     ">

@@ -2,7 +2,11 @@ import { Controller, Get, Post, Body, Patch, Param, Delete, UseGuards, Req } fro
 import { StartupsService } from './startups.service';
 import { CreateStartupDto } from './dto/create-startup.dto';
 import { UpdateStartupDto } from './dto/update-startup.dto';
+<<<<<<< HEAD
 import { JwtAuthGuard } from 'src/guards/jwt-auth.guard';
+=======
+import { JwtAuthGuard } from '../guards/jwt-auth.guard';
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 
 @Controller('startups')
 @UseGuards(JwtAuthGuard)

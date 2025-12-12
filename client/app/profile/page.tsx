@@ -33,6 +33,7 @@ export default function Profile() {
   };
 
   return (
+<<<<<<< HEAD
     <div style={{
       width: "100%",
       minHeight: "100vh",
@@ -50,10 +51,18 @@ export default function Profile() {
         boxShadow: "0 2px 10px rgba(0,0,0,0.1)",
       }}>
         <h1 style={{ fontSize: "32px", fontWeight: "bold", marginBottom: "30px", color: "#333" }}>
+=======
+    <div className="w-full min-h-screen bg-cover bg-center p-4 sm:p-6 lg:p-10" style={{
+      backgroundImage: "url('/backeground.jpg')",
+    }}>
+      <div className="max-w-sm sm:max-w-md lg:max-w-2xl mx-auto bg-white p-6 sm:p-8 lg:p-10 rounded-lg shadow-lg">
+        <h1 className="text-2xl sm:text-3xl font-bold mb-6 sm:mb-8 text-gray-800 text-center">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           Profile
         </h1>
 
         <form onSubmit={handleSubmit}>
+<<<<<<< HEAD
           <div style={{ marginBottom: "30px", textAlign: "center" }}>
             <div style={{
               width: "120px",
@@ -71,11 +80,20 @@ export default function Profile() {
                 <img src={profileImage} alt="Profile" style={{ width: "100%", height: "100%", objectFit: "cover" }} />
               ) : (
                 <svg width="60" height="60" fill="#ccc" viewBox="0 0 20 20">
+=======
+          <div className="mb-6 sm:mb-8 text-center">
+            <div className="w-24 h-24 sm:w-32 sm:h-32 rounded-full bg-gray-100 mx-auto mb-4 overflow-hidden border-3 border-gray-300 flex items-center justify-center">
+              {profileImage ? (
+                <img src={profileImage} alt="Profile" className="w-full h-full object-cover" />
+              ) : (
+                <svg width="40" height="40" className="sm:w-16 sm:h-16" fill="#ccc" viewBox="0 0 20 20">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
                   <circle cx="10" cy="7" r="3.5" />
                   <path d="M4 17a6 6 0 0 1 12 0" strokeWidth="1.5" stroke="#ccc" fill="none" />
                 </svg>
               )}
             </div>
+<<<<<<< HEAD
             <label style={{
               display: "inline-block",
               padding: "8px 16px",
@@ -87,17 +105,29 @@ export default function Profile() {
               fontWeight: "500",
               color: "#333",
             }}>
+=======
+            <label className="inline-block px-4 py-2 bg-gray-50 border border-gray-300 rounded cursor-pointer text-sm font-medium text-gray-700 hover:bg-gray-100 transition-colors">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               Upload Photo
               <input
                 type="file"
                 accept="image/*"
                 onChange={handleImageChange}
+<<<<<<< HEAD
                 style={{ display: "none" }}
               />
             </label>
           </div>
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500", color: "#333" }}>
+=======
+className="hidden"
+              />
+            </label>
+          </div>
+          <div className="mb-4 sm:mb-6">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               Full Name
             </label>
             <input
@@ -105,6 +135,7 @@ export default function Profile() {
               name="fullName"
               value={formData.fullName}
               onChange={handleChange}
+<<<<<<< HEAD
               style={{
                 width: "100%",
                 padding: "12px",
@@ -117,6 +148,14 @@ export default function Profile() {
 
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500", color: "#333" }}>
+=======
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          <div className="mb-4 sm:mb-6">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               Email
             </label>
             <input
@@ -124,6 +163,7 @@ export default function Profile() {
               name="email"
               value={formData.email}
               onChange={handleChange}
+<<<<<<< HEAD
               style={{
                 width: "100%",
                 padding: "12px",
@@ -151,6 +191,21 @@ export default function Profile() {
                   cursor: "pointer",
                   width: "90px",
                 }}
+=======
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          <div className="mb-4 sm:mb-6">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+              Phone Number
+            </label>
+            <div className="flex gap-2 sm:gap-3">
+              <select
+                value={countryCode}
+                onChange={(e) => setCountryCode(e.target.value)}
+                className="p-3 border border-gray-300 rounded-lg text-sm bg-white cursor-pointer w-20 sm:w-24 focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               >
                 <option value="+213">Algeria 🇩🇿 +213</option>
                 <option value="+61">Australia 🇦🇺 +61</option>
@@ -188,6 +243,7 @@ export default function Profile() {
                 name="phone"
                 value={formData.phone}
                 onChange={handleChange}
+<<<<<<< HEAD
                 style={{
                   flex: 1,
                   padding: "12px",
@@ -195,12 +251,20 @@ export default function Profile() {
                   borderRadius: "4px",
                   fontSize: "14px",
                 }}
+=======
+                className="flex-1 p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               />
             </div>
           </div>
 
+<<<<<<< HEAD
           <div style={{ marginBottom: "20px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500", color: "#333" }}>
+=======
+          <div className="mb-4 sm:mb-6">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               Skills
             </label>
             <textarea
@@ -208,6 +272,7 @@ export default function Profile() {
               value={formData.skills}
               onChange={handleChange}
               rows={3}
+<<<<<<< HEAD
               style={{
                 width: "100%",
                 padding: "12px",
@@ -221,6 +286,14 @@ export default function Profile() {
 
           <div style={{ marginBottom: "30px" }}>
             <label style={{ display: "block", marginBottom: "8px", fontSize: "14px", fontWeight: "500", color: "#333" }}>
+=======
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm resize-vertical focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+            />
+          </div>
+
+          <div className="mb-6 sm:mb-8">
+            <label className="block mb-2 text-sm font-medium text-gray-700">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               Role
             </label>
             <input
@@ -228,6 +301,7 @@ export default function Profile() {
               name="role"
               value={formData.role}
               onChange={handleChange}
+<<<<<<< HEAD
               style={{
                 width: "100%",
                 padding: "12px",
@@ -235,11 +309,15 @@ export default function Profile() {
                 borderRadius: "4px",
                 fontSize: "14px",
               }}
+=======
+              className="w-full p-3 border border-gray-300 rounded-lg text-sm focus:ring-2 focus:ring-blue-500 focus:border-blue-500 outline-none"
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
             />
           </div>
 
           <button
             type="submit"
+<<<<<<< HEAD
             style={{
               width: "100%",
               padding: "14px",
@@ -251,6 +329,9 @@ export default function Profile() {
               fontWeight: "600",
               cursor: "pointer",
             }}
+=======
+            className="w-full py-3 sm:py-4 bg-blue-600 text-white border-none rounded-lg text-sm sm:text-base font-semibold cursor-pointer hover:bg-blue-700 transition-colors"
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           >
             Update Profile
           </button>

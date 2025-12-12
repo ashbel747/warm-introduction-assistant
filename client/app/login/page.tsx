@@ -73,6 +73,7 @@ export default function LoginPage() {
         </button>
       </div>
       <div
+<<<<<<< HEAD
         style={{
           background: 'white',
           borderRadius: '16px',
@@ -84,11 +85,16 @@ export default function LoginPage() {
           display: 'flex',
           flexDirection: 'column',
           gap: '1rem',
+=======
+        className="bg-white rounded-2xl p-6 sm:p-10 shadow-lg max-w-sm sm:max-w-md w-full mx-4 border border-gray-200 flex flex-col gap-4"
+        style={{
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           opacity: isVisible ? 1 : 0,
           transform: isVisible ? 'translateY(0)' : 'translateY(50px)',
           transition: 'opacity 1s ease-out, transform 1s ease-out',
         }}
       >
+<<<<<<< HEAD
         <div style={{ textAlign: 'center', marginBottom: '0.5rem' }}>
           <img 
             src="/logo.png" 
@@ -98,22 +104,40 @@ export default function LoginPage() {
               marginBottom: 10, 
               display: 'block', 
               margin: '0 auto 10px auto',
+=======
+        <div className="text-center mb-2">
+          <img 
+            src="/logo.png" 
+            alt="Logo" 
+            className="h-12 sm:h-16 mb-3 mx-auto"
+            style={{
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               opacity: isVisible ? 1 : 0,
               transform: isVisible ? 'scale(1) translateY(0)' : 'scale(0.5) translateY(-30px)',
               transition: 'opacity 1.2s ease-out 0.3s, transform 1.2s ease-out 0.3s',
             }} 
           />
+<<<<<<< HEAD
           <h2 style={{ margin: 0, fontWeight: 700 }}>Welcome back</h2>
           <div style={{ color: '#666', fontSize: 15 }}>warm Introduction Assistant</div>
+=======
+          <h2 className="text-xl sm:text-2xl font-bold m-0">Welcome back</h2>
+          <div className="text-gray-600 text-sm sm:text-base">warm Introduction Assistant</div>
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
         </div>
 
         <form onSubmit={handleLogin}>
           <div>
+<<<<<<< HEAD
             <label style={{ fontWeight: 500 }}>Email</label>
+=======
+            <label className="font-medium text-sm sm:text-base">Email</label>
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
             <input
               type="email"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
+<<<<<<< HEAD
               style={{
                 width: '100%',
                 padding: '10px',
@@ -129,10 +153,19 @@ export default function LoginPage() {
             />
             <label style={{ fontWeight: 500 }}>Password</label>
             <div style={{ position: 'relative', marginBottom: 10 }}>
+=======
+              className="w-full p-3 rounded-lg border border-gray-300 text-sm sm:text-base outline-none mt-1 mb-3 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              placeholder="Enter email"
+              required
+            />
+            <label className="font-medium text-sm sm:text-base">Password</label>
+            <div className="relative mb-3">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               <input
                 type={showPassword ? 'text' : 'password'}
                 value={password}
                 onChange={(e) => setPassword(e.target.value)}
+<<<<<<< HEAD
                 style={{
                   width: '100%',
                   padding: '10px',
@@ -142,10 +175,14 @@ export default function LoginPage() {
                   outline: 'none',
                   marginTop: 3,
                 }}
+=======
+                className="w-full p-3 rounded-lg border border-gray-300 text-sm sm:text-base outline-none mt-1 pr-12 focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
                 placeholder="Enter password"
                 required
               />
               <span
+<<<<<<< HEAD
                 style={{
                   position: 'absolute',
                   right: 12,
@@ -155,6 +192,9 @@ export default function LoginPage() {
                   fontSize: 18,
                   color: '#888',
                 }}
+=======
+                className="absolute right-3 top-1/2 transform -translate-y-1/2 cursor-pointer text-lg text-gray-500 hover:text-gray-700"
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
                 onClick={() => setShowPassword(!showPassword)}
                 aria-label={showPassword ? 'Hide password' : 'Show password'}
                 title={showPassword ? 'Hide password' : 'Show password'}
@@ -162,15 +202,24 @@ export default function LoginPage() {
                 {showPassword ? '🙈' : '👁️'}
               </span>
             </div>
+<<<<<<< HEAD
             <div style={{ textAlign: 'left', marginBottom: 10 }}>
               <a href="/forgot-password" style={{ color: '#254FBD', fontSize: '14px', textDecoration: 'underline' }}>
+=======
+            <div className="text-left mb-3">
+              <a href="/forgot-password" className="text-blue-600 text-sm underline hover:text-blue-800">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
                 Forget password?
               </a>
             </div>
           </div>
 
           {error && (
+<<<<<<< HEAD
             <div style={{ color: 'red', fontSize: '14px', marginBottom: '10px', textAlign: 'center' }}>
+=======
+            <div className="text-red-500 text-sm mb-3 text-center">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
               {error}
             </div>
           )}
@@ -178,6 +227,7 @@ export default function LoginPage() {
           <button
             type="submit"
             disabled={loading}
+<<<<<<< HEAD
             style={{
               backgroundColor: loading ? '#ccc' : '#0347D2',
               color: 'white',
@@ -190,14 +240,27 @@ export default function LoginPage() {
               marginBottom: 10,
               width: '100%',
             }}
+=======
+            className={`w-full py-3 rounded-lg text-white text-sm sm:text-base font-semibold mb-3 transition-colors ${
+              loading 
+                ? 'bg-gray-400 cursor-not-allowed' 
+                : 'bg-blue-600 hover:bg-blue-700 cursor-pointer'
+            }`}
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           >
             {loading ? 'Signing In...' : 'Sign In'}
           </button>
         </form>
 
+<<<<<<< HEAD
         <div style={{ textAlign: 'center', fontSize: 14, color: '#666', marginTop: 8 }}>
           Don't have an account?{' '}
           <a href="/signup" style={{ color: '#254FBD', textDecoration: 'underline' }}>
+=======
+        <div className="text-center text-sm text-gray-600 mt-2">
+          Don't have an account?{' '}
+          <a href="/signup" className="text-blue-600 underline hover:text-blue-800">
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
           Sign Up
           </a>
         </div>

@@ -10,9 +10,15 @@
   },
   "dependencies": {
     "lucide-react": "^0.556.0",
+<<<<<<< HEAD
     "next": "^16.0.8",
     "react": "^19.2.1",
     "react-dom": "^19.2.1"
+=======
+    "next": "^16.0.10",
+    "react": "^19.2.3",
+    "react-dom": "^19.2.3"
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",

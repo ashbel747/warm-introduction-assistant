@@ -9,9 +9,12 @@ import { createInvestor, updateInvestor } from '../../lib/investor-api';
 type Props = {
   initialData?: Investor;
   isEdit: boolean;
+<<<<<<< HEAD
   submitLabel?: string;
   disabled?: boolean;
   onSubmit?: (data: CreateInvestorDto) => Promise<void>;
+=======
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
 };
 
 const FormField: React.FC<{
@@ -96,7 +99,11 @@ const FormField: React.FC<{
   );
 };
 
+<<<<<<< HEAD
 const InvestorForm: React.FC<Props> = ({ initialData, isEdit, onSubmit: wizardOnSubmit, submitLabel, disabled = false }) => {
+=======
+const InvestorForm: React.FC<Props> = ({ initialData, isEdit }) => {
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
   const router = useRouter();
 
   interface InvestorFormData
@@ -150,6 +157,7 @@ const InvestorForm: React.FC<Props> = ({ initialData, isEdit, onSubmit: wizardOn
       preferred_intro_format: formData.preferred_intro_format as IntroFormat,
     };
 
+<<<<<<< HEAD
     if (!isEdit && wizardOnSubmit) {
         try {
             await wizardOnSubmit(payload);
@@ -162,6 +170,8 @@ const InvestorForm: React.FC<Props> = ({ initialData, isEdit, onSubmit: wizardOn
         return; // Exit here, let the parent handle navigation
     }
 
+=======
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
     try {
       if (isEdit && initialData) {
         await updateInvestor(initialData._id, payload);
@@ -293,6 +303,7 @@ const InvestorForm: React.FC<Props> = ({ initialData, isEdit, onSubmit: wizardOn
 
         <button
           type="submit"
+<<<<<<< HEAD
           disabled={loading || disabled} 
           className="w-full ml-4 bg-blue-700 text-white text-lg font-semibold py-3 rounded-lg shadow-xl hover:bg-blue-800 disabled:opacity-50"
         >
@@ -300,6 +311,13 @@ const InvestorForm: React.FC<Props> = ({ initialData, isEdit, onSubmit: wizardOn
             ? 'Processing...'
             : submitLabel
             ? submitLabel
+=======
+          disabled={loading}
+          className="w-full ml-4 bg-blue-700 text-black text-lg font-semibold py-3 rounded-lg shadow-xl hover:bg-blue-800 disabled:opacity-50"
+        >
+          {loading
+            ? 'Saving...'
+>>>>>>> abb365ab13b940264d920f04550b791feba24a92
             : isEdit
             ? 'Update Investor'
             : 'Create Investor'}
