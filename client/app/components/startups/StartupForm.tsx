@@ -1,115 +1,119 @@
 'use client';
 
 import { useState } from "react";
-import { CreateStartupDto, Startup } from "../../types/startup";
-import { useToast } from "../Toast";
-import { Loader2 } from "lucide-react";
+import { CreateStartupDto, Startup, VALID_TAGS } from "../../types/startup";
+import { Loader2, Check } from "lucide-react";
 
 interface Props {
-    initialData?: Startup;
+    founderId: string;
     onSubmit: (data: CreateStartupDto) => Promise<void>;
     submitLabel: string;
+    initialData?: Startup;
 }
 
-const FormField: React.FC<{
-    label: string;
-    name: keyof CreateStartupDto;
-    value: string;
-    onChange: (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => void;
-    required?: boolean;
-    isTextArea?: boolean;
-    helpText?: string;
-}> = ({ label, name, value, onChange, required, isTextArea, helpText }) => {
-    const InputComponent = isTextArea ? "textarea" : "input";
-    const inputProps = isTextArea ? { rows: 2 } : { type: 'text' }; 
-
-    return (
-        <div className="space-y-1">
-            <label data-testid={`label-${name}`} htmlFor={name} className="block text-black font-medium">
-                {label}{required && <span className="text-red-400">*</span>}
-            </label>
-
-            <InputComponent
-                data-testid={`input-${name}`}
-                id={name}
-                name={name}
-                value={value}
-                onChange={onChange}
-                required={required}
-                {...inputProps}
-                className="w-full p-2 text-base bg-white text-gray-900 rounded-lg shadow-inner focus:outline-none focus:ring-2 focus:ring-blue-500 placeholder-gray-400"
-            />
-            {helpText && (
-                <p data-testid={`help-${name}`} className="text-xs text-gray-300 mt-1">{helpText}</p>
-            )}
-        </div>
-    );
-};
-
-export default function StartupForm({ initialData, onSubmit, submitLabel }: Props) {
-    const [form, setForm] = useState<CreateStartupDto>({
-        name: initialData?.name || "",
-        blurb: initialData?.blurb || "",
-        pitchLink: initialData?.pitchLink || "",
-    });
+export default function StartupForm({ founderId, onSubmit, submitLabel, initialData, ...props }: Props) {
     const [isSubmitting, setIsSubmitting] = useState(false);
-    const { showToast } = useToast();
+    
+    const initialFormState = {
+        name: "",
+        founderName: "",
+        founderEmail: "",
+        blurb: "",
+        pitchLink: "",
+    };
 
-    function handleChange(e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) {
-        setForm({ ...form, [e.target.name]: e.target.value });
-    }
+    const [formData, setFormData] = useState(initialFormState);
+    const [selectedTags, setSelectedTags] = useState<string[]>([]);
+
+    const toggleTag = (tag: string) => {
+        setSelectedTags(prev => {
+            if (prev.includes(tag)) return prev.filter(t => t !== tag);
+            if (prev.length >= 6) return prev;
+            return [...prev, tag];
+        });
+    };
+
+    const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+        setFormData({ ...formData, [e.target.name]: e.target.value });
+    };
 
     async function handleSubmit(e: React.FormEvent) {
         e.preventDefault();
         setIsSubmitting(true);
-
         try {
-            await onSubmit(form);
-            showToast("Startup saved successfully!", "success");
-        } catch (err) {
-            console.error(err);
-            showToast("Failed to save startup.", "error");
+            await onSubmit({ 
+                ...formData, 
+                tags: selectedTags, 
+                founderId 
+            });
+            
+            // Clear form on success
+            setFormData(initialFormState);
+            setSelectedTags([]);
+            
         } finally {
             setIsSubmitting(false);
         }
     }
 
+    // focus:ring updated to blue-500
+    const inputClasses = "w-full p-3 bg-[#1c212c] border border-gray-800 text-white rounded-xl focus:ring-2 focus:ring-blue-500 focus:border-transparent outline-none transition-all placeholder-gray-500";
+    const labelClasses = "block text-sm font-semibold text-gray-400 mb-2";
+
     return (
-        <form data-testid="startup-form" onSubmit={handleSubmit} className="space-y-4"> 
-            <FormField
-                label="Startup Name"
-                name="name"
-                value={form.name}
-                onChange={handleChange}
-                required
-            />
+        <form onSubmit={handleSubmit} className="space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                <div>
+                    <label className={labelClasses}>Startup Name</label>
+                    <input name="name" value={formData.name} onChange={handleChange} required className={inputClasses} placeholder="e.g. EcoTrack" />
+                </div>
+                <div>
+                    <label className={labelClasses}>Founder Name</label>
+                    <input name="founderName" value={formData.founderName} onChange={handleChange} required className={inputClasses} placeholder="Your full name" />
+                </div>
+            </div>
 
-            <FormField
-                label="Blurb"
-                name="blurb"
-                value={form.blurb}
-                onChange={handleChange}
-                isTextArea
-                required
-                helpText="This will be used to generate personalized investor introductions."
-            />
+            <div>
+                <label className={labelClasses}>Email Address</label>
+                <input name="founderEmail" type="email" value={formData.founderEmail} onChange={handleChange} required className={inputClasses} placeholder="founder@company.com" />
+            </div>
 
-            <FormField 
-                label="Pitch Link" 
-                name="pitchLink"
-                value={form.pitchLink}
-                onChange={handleChange}
-                required
-            />
+            <div>
+                <label className={labelClasses}>Startup Blurb</label>
+                <textarea name="blurb" value={formData.blurb} onChange={handleChange} required rows={4} className={inputClasses} placeholder="Describe your product..." />
+            </div>
 
+            <div>
+                <label className={labelClasses}>Pitch Deck URL</label>
+                <input name="pitchLink" type="url" value={formData.pitchLink} onChange={handleChange} required className={inputClasses} placeholder="Link to deck" />
+            </div>
+
+            <div>
+                <label className={labelClasses}>Industries of target invetors (Select 3-6)</label>
+                <div className="flex flex-wrap gap-2">
+                    {VALID_TAGS.map((tag) => (
+                        <button
+                            key={tag}
+                            type="button"
+                            onClick={() => toggleTag(tag)}
+                            className={`px-4 py-2 rounded-full text-xs font-bold border transition-all flex items-center gap-2 ${
+                                selectedTags.includes(tag)
+                                    ? "bg-blue-600/20 border-blue-500 text-blue-400"
+                                    : "bg-[#1c212c] border-gray-800 text-gray-400 hover:border-blue-500/50"
+                            }`}
+                        >
+                            {selectedTags.includes(tag) && <Check className="w-3 h-3" />}
+                            {tag}
+                        </button>
+                    ))}
+                </div>
+            </div>
             <button 
-                data-testid="submit-startup"
                 type="submit" 
-                className={`w-full bg-blue-700 text-white text-lg font-semibold py-3 rounded-lg mt-6 shadow-xl hover:bg-blue-800 transition duration-150 flex justify-center items-center space-x-2`}
-                disabled={isSubmitting}
+                disabled={isSubmitting || selectedTags.length < 3}
+                className="w-full bg-linear-to-r from-blue-600 to-blue-400 hover:from-blue-500 hover:to-blue-300 text-white font-medium py-3 px-8 rounded-lg transition-all duration-300 shadow-lg shadow-blue-500/20 flex items-center justify-center group disabled:from-gray-800 disabled:to-gray-800 disabled:text-gray-600 disabled:shadow-none"
             >
-                {isSubmitting && <Loader2 data-testid="loading-spinner" className="animate-spin h-5 w-5 text-white" />}
-                <span>{submitLabel}</span>
+                {isSubmitting ? <Loader2 className="animate-spin h-5 w-5" /> : submitLabel}
             </button>
         </form>
     );

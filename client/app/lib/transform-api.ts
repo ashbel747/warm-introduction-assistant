@@ -3,7 +3,7 @@ import { QueueIntroDto, TransformIntroDto, TransformIntroResponse } from '../typ
 const API_BASE_URL = process.env.NEXT_PUBLIC_FOUNDER_API_URL || 'http://localhost:4000';
 
 const getAuthHeaders = () => {
-  const authToken = localStorage.getItem('token'); // JWT from login
+  const authToken = localStorage.getItem('token');
   if (!authToken) {
     throw new Error('No authentication token found. Please login.');
   }
@@ -37,11 +37,9 @@ export async function transformIntroApi(dto: TransformIntroDto): Promise<Transfo
 }
 
 export async function queueIntroApi(data: QueueIntroDto): Promise<any> {
-    const headers = getAuthHeaders();
-
     const response = await fetch(`${API_BASE_URL}/intros/queue`, {
         method: 'POST',
-        headers: headers,
+        headers: getAuthHeaders(),
         body: JSON.stringify(data),
     });
 

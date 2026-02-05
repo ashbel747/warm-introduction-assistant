@@ -1,45 +1,28 @@
 'use client';
 
-import { useEffect, useState } from 'react';
-import { Filter, Clock, Users, Bell, CalendarCheck, Scroll, Wand2 } from 'lucide-react';
-import DashboardCard from '../components/dashboard/DashboardCard';
-import { Reminder } from '../types/reminder';
-import { IntroQueue, IntroStatus } from '../types/intro';
-import { fetchReminders } from '../lib/reminder-api';
+import { useState, useEffect } from 'react';
+import { usePresence } from '../hooks/usePresence';
+import { Users, CheckCircle2, Clock, Bell, Check, Activity, ChevronRight } from 'lucide-react';
+import Link from 'next/link';
+import { fetchReminders, markReminderCompleted } from '../lib/reminder-api';
 import { getInvestors } from '../lib/investor-api';
-import { fetchIntrosByFounder } from '../lib/intro-api';
+import { fetchIntrosByFounder, fetchExecutionRate, fetchOutcomeLogs } from '../lib/intro-api';
+import { getMyRequests } from '../lib/startup-api';
+import { IntroQueue, OutcomeLog } from '../types/intro';
+import { Reminder } from '../types/reminder';
+import { Startup } from '../types/startup';
+import { useToast } from '../components/Toast';
 
-// Helper for status badges
-const getStatusStyle = (status: IntroStatus): { style: string; text: string } => {
-    switch (status) {
-        case 'queued':
-            return { style: 'bg-gray-400', text: 'Drafted' };
-        case 'sent':
-            return { style: 'bg-blue-300', text: 'Sent' };
-        case 'completed':
-            return { style: 'bg-purple-500/50', text: 'Completed' };
-        default:
-            return { style: 'bg-gray-400/50', text: 'Unknown' };
-    }
-};
-
-const StatusBadge: React.FC<{ status: IntroStatus }> = ({ status }) => {
-    const { style, text } = getStatusStyle(status);
+const isToday = (someDate: Date): boolean => {
+    const today = new Date();
     return (
-        <span className={`mt-2 inline-block text-xs font-semibold px-2 py-0.5 rounded-full text-black ${style}`}>
-            {text}
-        </span>
+        someDate.getDate() === today.getDate() &&
+        someDate.getMonth() === today.getMonth() &&
+        someDate.getFullYear() === today.getFullYear()
     );
 };
 
-// Helper for Reminders
-const isToday = (someDate: Date) => {
-    const today = new Date();
-    return someDate.getDate() === today.getDate() &&
-        someDate.getMonth() === today.getMonth() &&
-        someDate.getFullYear() === today.getFullYear();
-};
-const differenceInDays = (targetDate: Date) => {
+const differenceInDays = (targetDate: Date): number => {
     const now = new Date();
     const dueDate = new Date(targetDate.getFullYear(), targetDate.getMonth(), targetDate.getDate());
     const today = new Date(now.getFullYear(), now.getMonth(), now.getDate());
@@ -47,147 +30,247 @@ const differenceInDays = (targetDate: Date) => {
     return Math.ceil(diffTime / (1000 * 60 * 60 * 24));
 };
 
-// Dashboard Data Hook
 interface DashboardData {
     totalIntros: number;
     pendingFollowUps: number;
     myInvestors: number;
     remindersDue: number;
+    executionRate: number;
+    completedIntros: number;
     latestIntros: IntroQueue[];
+    reminders: Reminder[];
+    logs: OutcomeLog[];
+    recentRequests: Startup[];
 }
-const useDashboardData = () => {
-    const [data, setData] = useState<DashboardData>({
-        totalIntros: 0,
-        pendingFollowUps: 0,
-        myInvestors: 0,
-        remindersDue: 0,
-        latestIntros: [],
-    });
-    const [loading, setLoading] = useState(true);
 
-    useEffect(() => {
-        const loadData = async () => {
-            setLoading(true);
-            try {
-                const intros = await fetchIntrosByFounder();
-                const totalIntros = intros.length;
-                const pendingFollowUps = intros.filter(i => i.status === 'queued' || i.status === 'sent').length;
-                const latestIntros = intros.sort((a,b)=> new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime()).slice(0,2);
-                const investors = await getInvestors();
-                const myInvestors = investors.length;
-                const reminders = await fetchReminders();
-                const remindersDue = reminders.filter(r => {
-                    const dueDate = new Date(r.date);
-                    const daysDiff = differenceInDays(dueDate);
-                    return isToday(dueDate) || daysDiff < 0;
-                }).length;
-
-                setData({ totalIntros, pendingFollowUps, myInvestors, remindersDue, latestIntros });
-            } catch (err) {
-                console.error(err);
-                setData({ totalIntros:0, pendingFollowUps:0, myInvestors:0, remindersDue:0, latestIntros:[] });
-            } finally {
-                setLoading(false);
-            }
-        };
-        loadData();
-    }, []);
-
-    return { data, loading };
-};
-
-// Main Dashboard
 export default function DashboardPage() {
-    const { data, loading } = useDashboardData();
-
-    // Skeleton Cards
-    const SkeletonCard = () => (
-        <div className="p-4 bg-gray-200 rounded-xl animate-pulse h-28" />
-    );
-    const SkeletonActionCard = () => (
-        <div className="p-4 bg-gray-200 rounded-xl animate-pulse h-20" />
-    );
-    const SkeletonDraftCard = () => (
-        <div className="p-4 bg-gray-200 rounded-xl animate-pulse h-24" />
-    );
+    const { showToast } = useToast();
+    const [loading, setLoading] = useState(true);
+    const [processingId, setProcessingId] = useState<string | null>(null);
+    const [data, setData] = useState<DashboardData>({
+        totalIntros: 0, pendingFollowUps: 0, myInvestors: 0, remindersDue: 0,
+        executionRate: 0, completedIntros: 0, latestIntros: [], reminders: [],
+        logs: [], recentRequests: [],
+    });
     
+    const [founder, setFounder] = useState<{ _id?: string; name: string; email: string; tier: string; } | null>(null);
 
-    const ActionCardBadge: React.FC<{ count: number }> = ({ count }) => {
-        if (count === 0) return null;
-        return (
-            <span className="absolute -top-2 -right-2 bg-red-600 text-white text-xs font-bold w-6 h-6 flex items-center justify-center rounded-full border-2 border-gray-900 shadow-xl">
-                {count > 99 ? '99+' : count}
-            </span>
-        );
+    const loadDashboardData = async () => {
+        try {
+            const [introsResponse, investorsResponse, reminders, rate, logs, requests] = await Promise.all([
+                fetchIntrosByFounder(undefined, '', 1),
+                getInvestors(),
+                fetchReminders(),
+                fetchExecutionRate(),
+                fetchOutcomeLogs(),
+                getMyRequests(1, 10)
+            ]);
+
+            const introsData = introsResponse.data || [];
+            const investorsData = investorsResponse.investors || [];
+
+            const pendingCount = introsData.filter(i => i.status === 'queued' || i.status === 'sent').length;
+            const completedCount = introsData.filter(i => i.status === 'completed').length;
+            
+            setData({
+                totalIntros: introsResponse.meta?.total || introsData.length,
+                pendingFollowUps: pendingCount,
+                myInvestors: investorsResponse.meta?.total || investorsData.length,
+                remindersDue: reminders.filter(r => (isToday(new Date(r.date)) || differenceInDays(new Date(r.date)) < 0) && r.introId?.status !== 'completed').length,
+                executionRate: rate,
+                completedIntros: completedCount,
+                latestIntros: introsData.slice(0, 3),
+                reminders: reminders,
+                logs: logs.slice(0, 6),
+                recentRequests: requests.startups.slice(0, 3),
+            });
+        } catch (err: any) {
+            showToast("An error occured while loading the dashboard", "error");
+        } finally {
+            setLoading(false);
+        }
     };
 
-    return (
-        <div className="min-h-screen bg-cover bg-center p-6 md:p-8" style={{ backgroundImage: "url('/background-img.jpg')" }}>
-            <div className="max-w-7xl mx-auto">
-                <h1 className="text-4xl font-semibold text-white mb-2">Welcome back!</h1>
-                <p className="text-xl text-gray-300 mb-8">Track your investor outreach and manage introductions</p>
+    useEffect(() => {
+        const stored = localStorage.getItem('user');
+        if (stored) {
+            const parsed = JSON.parse(stored);
+            if (parsed.id) setFounder({ ...parsed, _id: parsed.id });
+        }
+        loadDashboardData();
+    }, []);
 
-                {/* Summary Cards */}
-                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
-                    {loading ? [0,1,2,3].map(i => <SkeletonCard key={i} />) : (
-                        <>
-                            <DashboardCard title="Total Intros" count={data.totalIntros} icon={Filter} iconColor="text-blue-400" bgColor="border-blue-500" />
-                            <DashboardCard title="Pending Follow-ups" count={data.pendingFollowUps} icon={Clock} iconColor="text-yellow-400" bgColor="border-yellow-500" />
-                            <DashboardCard title="My Investors" count={data.myInvestors} icon={Users} iconColor="text-green-400" bgColor="border-green-500" />
-                            <DashboardCard title="Reminders (Due Today/Overdue)" count={data.remindersDue} icon={Bell} iconColor="text-red-400" bgColor="border-red-500" />
-                        </>
-                    )}
-                </div>
+    usePresence(founder?._id, (update) => console.log(update));
 
-                {/* Quick Actions */}
-                <div className="mb-12">
-                    <h2 className="text-2xl font-semibold text-white mb-4">Quick Actions</h2>
-                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                        {loading ? [0,1,2,3].map(i => <SkeletonActionCard key={i} />) : (
-                            <>
-                                <a href="/investors" className="flex items-center justify-between p-4 bg-white rounded-xl shadow-lg hover:bg-gray-200 transition relative">
-                                    <Users className="h-6 w-6 mr-3 text-black" />
-                                    <span className="text-lg font-medium text-black">Manage Investors</span>
-                                </a>
-                                <a href="/startups" className="flex items-center justify-between p-4 bg-white rounded-xl shadow-lg hover:bg-gray-200 transition relative">
-                                    <Scroll className="h-6 w-6 mr-3 text-black" />
-                                    <span className="text-lg font-medium text-black">Manage Startups</span>
-                                </a>
-                                <a href="/intro-wizard" className="flex items-center justify-between p-4 bg-white rounded-xl shadow-lg hover:bg-gray-200 transition relative">
-                                    <Wand2 className="h-6 w-6 mr-3 text-black" />
-                                    <span className="text-lg font-medium text-black">Generate new intro</span>
-                                </a>
-                                <a href="/reminders" className="flex items-center justify-between p-4 bg-white rounded-xl shadow-lg ring-2 ring-red-500/50 hover:bg-gray-200 transition relative">
-                                    <ActionCardBadge count={data.remindersDue} />
-                                    <CalendarCheck className="h-6 w-6 mr-3 text-red-400" />
-                                    <span className="text-lg font-bold text-black">View Reminders</span>
-                                </a>
-                            </>
-                        )}
+    const handleMarkAsDone = async (reminder: Reminder) => {
+        try {
+            setProcessingId(reminder._id);
+            await markReminderCompleted(reminder._id);
+            showToast('Reminder completed', 'success');
+            await loadDashboardData();
+        } catch (err) {
+            showToast('Update failed', 'error');
+        } finally {
+            setProcessingId(null);
+        }
+    };
+
+    if (loading) {
+        return (
+            <div className="min-h-screen bg-linear-to-br from-blue-900 via-slate-800 to-gray-950 p-6 lg:p-10 space-y-8">
+                <div className="max-w-7xl mx-auto space-y-8">
+                    <div className="h-10 w-64 bg-slate-800/50 rounded-lg animate-pulse" />
+                    <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                        {[...Array(4)].map((_, i) => (
+                            <div key={i} className="h-32 bg-gray-900 border border-slate-800 rounded-2xl animate-pulse" />
+                        ))}
+                    </div>
+                    <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                        <div className="h-[350px] bg-gray-900 border border-slate-800 rounded-2xl animate-pulse" />
+                        <div className="h-[350px] bg-gray-900 border border-slate-800 rounded-2xl animate-pulse" />
                     </div>
                 </div>
-
-                {/* Latest Drafts */}
-                <div>
-                    <h2 className="text-2xl font-semibold text-white mb-4">Latest Drafts</h2>
-                    <div className="space-y-4">
-                        {loading ? [0,1].map(i => <SkeletonDraftCard key={i} />) : (
-                            data.latestIntros.length > 0 ? data.latestIntros.map((intro) => (
-                                <div key={intro._id} className="p-4 bg-white rounded-xl shadow-lg border-l-4" style={{ borderLeftColor: getStatusStyle(intro.status).style.replace('bg-', '#').replace('/50','') }}>
-                                    <p className="text-lg font-semibold text-black truncate">Intro for: {intro.startupName}</p>
-                                    <p className="text-sm text-black">To: {intro.investorName}</p>
-                                    <StatusBadge status={intro.status} />
-                                </div>
-                            )) : (
-                                <div className="p-4 bg-white rounded-xl shadow-lg text-center text-black">
-                                    No recent drafts found.
-                                </div>
-                            )
-                        )}
-                    </div>
-                </div>
-
             </div>
+        );
+    }
+
+    return (
+        <div className="min-h-screen bg-linear-to-br from-blue-900 via-slate-800 to-gray-950 text-slate-200 p-6 lg:p-10">
+            <div className="max-w-7xl mx-auto space-y-8">
+                {founder && (
+                    <h2 className="text-4xl font-bold text-white mb-4 tracking-tight">
+                        Welcome back, <span className="text-blue-500">{founder.name}</span>
+                    </h2>
+                )}
+
+                <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <StatCard title="Total Investors" value={data.myInvestors} icon={<Users className="text-indigo-400" />} iconBg="bg-indigo-500/20" />
+                    <StatCard title="Intro Success" value={`${data.executionRate}%`} icon={<CheckCircle2 className="text-emerald-400" />} iconBg="bg-emerald-500/20" />
+                    <StatCard title="Requests" value={data.recentRequests?.length || 0} icon={<Activity className="text-blue-400" />} iconBg="bg-blue-500/20" />
+                    <StatCard title="Reminders" value={data.remindersDue} icon={<Bell className="text-cyan-400" />} iconBg="bg-cyan-500/20" />
+                </div>
+
+                <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+                    <section className="bg-gray-900 border border-slate-800 rounded-2xl p-6 h-[350px] flex flex-col">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-semibold text-white">Upcoming Reminders</h3>
+                            <Link href="/reminders" className="text-xs font-medium text-white hover:opacity-80 flex items-center gap-1">
+                                View all <ChevronRight size={14} />
+                            </Link>
+                        </div>
+                        <div className="space-y-3 overflow-y-auto grow custom-scrollbar">
+                            {data.reminders.filter(r => r.introId?.status !== 'completed').map(reminder => (
+                                <div key={reminder._id} className="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 border border-slate-800/50 group hover:border-indigo-500/30 transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <button 
+                                            onClick={() => handleMarkAsDone(reminder)}
+                                            className="w-5 h-5 rounded-md border-2 border-slate-600 group-hover:border-indigo-500 flex items-center justify-center"
+                                        >
+                                            <Check size={14} className="text-indigo-500 scale-0 group-hover:scale-100 transition-transform" />
+                                        </button>
+                                        <div className="min-w-0">
+                                            <p className="text-sm font-medium text-slate-200 truncate">{reminder.introId?.investorName}</p>
+                                            <p className="text-[11px] text-slate-500">Follow up due</p>
+                                        </div>
+                                    </div>
+                                    <span className="text-[10px] font-bold text-slate-500">{new Date(reminder.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}</span>
+                                </div>
+                            ))}
+                        </div>
+                    </section>
+
+                    <section className="bg-gray-900 border border-slate-800 rounded-2xl p-6 h-[350px] flex flex-col">
+                        <div className="flex items-center justify-between mb-6">
+                            <h3 className="text-lg font-semibold text-white">Founder Requests</h3>
+                            <Link href="/startups" className="text-xs font-medium text-white hover:opacity-80 flex items-center gap-1">
+                                View all <ChevronRight size={14} />
+                            </Link>
+                        </div>
+                        <div className="space-y-4 grow overflow-y-auto">
+                            {data.recentRequests.length > 0 ? (
+                                data.recentRequests.map((request) => (
+                                    <Link key={request._id} href="/startups">
+                                        <div className="flex items-center justify-between p-4 mb-2 rounded-xl bg-slate-900/60 border border-slate-800/50 hover:border-blue-500/30 transition-all group">
+                                            <div className="flex items-center gap-4 overflow-hidden">
+                                                <div className="w-10 h-10 bg-[#1c212c] border border-slate-800 rounded-full flex items-center justify-center text-white font-bold text-sm shrink-0 transition-colors">
+                                                    {request.founderName.split(' ').map(n => n[0]).join('').toUpperCase()}
+                                                </div>
+                                                <div className="overflow-hidden">
+                                                    <p className="text-sm font-bold text-white truncate">{request.name}</p>
+                                                    <p className="text-xs text-slate-500 truncate">{request.founderName}</p>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </Link>
+                                ))
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-full text-slate-500 italic text-sm">No new requests found.</div>
+                            )}
+                        </div>
+                    </section>
+
+                    <section className="bg-gray-900 border border-slate-800 rounded-2xl p-6 lg:col-span-2 h-[280px] flex flex-col overflow-hidden">
+                        <div className="flex items-center justify-between mb-6 shrink-0">
+                            <h3 className="text-lg font-semibold text-white">Intro Outcome Logs</h3>
+                            <Activity className="text-slate-500" size={18} />
+                        </div>
+
+                        <div className="flex flex-col gap-3 overflow-y-auto pr-2 grow custom-scrollbar"> 
+                            {data.logs.length > 0 ? (
+                                data.logs.map((log) => (
+                                    <div key={log._id} className="flex items-center justify-between p-4 rounded-xl bg-slate-900/40 border border-slate-800/50 hover:border-indigo-500/30 transition-all shrink-0">
+                                        <div className="flex items-center gap-4 overflow-hidden">
+                                            <div className="w-10 h-10 rounded-full bg-indigo-500/10 flex items-center justify-center text-indigo-400 shrink-0">
+                                                <Clock size={16} />
+                                            </div>
+                                            <div className="overflow-hidden">
+                                                <p className="text-sm font-medium text-slate-200 capitalize truncate">
+                                                    {log.outcome.replace(/_/g, ' ')}
+                                                </p>
+                                                <p className="text-xs text-slate-500 truncate">
+                                                    {log.notes}
+                                                </p>
+                                            </div>
+                                        </div>
+                                        
+                                        <div className="shrink-0 text-right ml-4">
+                                            <p className="text-[10px] font-bold text-slate-500 uppercase tracking-wider">
+                                                {log.createdAt ? new Date(log.createdAt).toLocaleDateString(undefined, { 
+                                                    month: 'short', 
+                                                    day: 'numeric' 
+                                                }) : 'Recent'}
+                                            </p>
+                                            <p className="text-[9px] text-slate-600">
+                                                {log.createdAt ? new Date(log.createdAt).toLocaleTimeString(undefined, { 
+                                                    hour: '2-digit', 
+                                                    minute: '2-digit',
+                                                    hour12: true 
+                                                }) : ''}
+                                            </p>
+                                        </div>
+                                    </div>
+                                ))
+                            ) : (
+                                <div className="flex flex-col items-center justify-center h-full text-slate-500 italic text-sm">
+                                    No activity logs to display.
+                                </div>
+                            )}
+                        </div>
+                    </section>
+                </div>
+            </div>
+        </div>
+    );
+}
+
+function StatCard({ title, value, icon, iconBg }: any) {
+    return (
+        <div className="bg-gray-900 border border-slate-800 p-5 rounded-2xl flex justify-between items-start">
+            <div>
+                <p className="text-sm text-slate-400 font-medium">{title}</p>
+                <h4 className="text-3xl font-bold text-white mt-1">{value}</h4>
+            </div>
+            <div className={`${iconBg} p-2 rounded-xl`}>{icon}</div>
         </div>
     );
 }
