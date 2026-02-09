@@ -1,6 +1,6 @@
 'use client';
 
-import { useState, useEffect, useCallback, useMemo, Suspense } from 'react'; // Added useMemo
+import { useState, useEffect, useCallback, useMemo, Suspense } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Loader2, ArrowLeft, Search, X, Copy, Check, Tag, ChevronLeft, ChevronRight, ArrowRight, Filter, UserPlus } from 'lucide-react';
 
@@ -11,14 +11,9 @@ import InvestorCard from '../components/investors/investorCard';
 
 import { getMyRequests, getStartupById } from '@/app/lib/startup-api';
 import { getInvestors, createInvestor } from '@/app/lib/investor-api';
-import { Startup } from '@/app/types/startup';
+import { Startup, VALID_TAGS } from '@/app/types/startup';
 import { Investor } from '@/app/types/investor';
 import { useToast } from '../components/Toast';
-
-export const VALID_TAGS = [
-    'SaaS', 'Fintech', 'AI/ML', 'Healthtech', 'Edtech', 'E-commerce', 
-    'Blockchain', 'B2B', 'B2C', 'Agritech', 'Cybersecurity', 'Web3'
-] as const;
 
 export default function NewIntroWizardPage() {
     return (
@@ -170,15 +165,19 @@ function IntroWizardContent() {
     };
 
     return (
-        <div className="min-h-screen bg-slate-950 py-12 px-4">
+        <div className="min-h-screen bg-linear-to-br from-gray-950 via-slate-800 to-blue-950 py-12 px-4">
             <div className="max-w-5xl mx-auto">
-                
-                <button onClick={() => router.push('/startups')} className="flex items-center space-x-2 text-gray-500 hover:text-white mb-8 transition-colors">
-                    <ArrowLeft size={20} />
-                    <span>Back to Dashboard</span>
-                </button>
 
-                <div className="bg-[#0f1219] rounded-3xl shadow-2xl border border-gray-800/50 overflow-hidden flex flex-col min-h-[750px]">
+                <div className="mb-10 text-center md:text-left">
+                    <h1 className="text-4xl font-extrabold text-white tracking-tight mb-3">
+                        Create New <span className="text-blue-500">Introduction</span>
+                    </h1>
+                    <p className="text-gray-400 text-lg max-w-2xl leading-relaxed">
+                        A seamless <span className="text-white font-medium">3-step process</span> to connect the right founders with the right investors.
+                    </p>
+                </div>
+
+                <div className="bg-gray-900 rounded-3xl shadow-2xl border border-gray-800/50 overflow-hidden flex flex-col min-h-[750px]">
                     
                     {/* Dark Tabs */}
                     <div className="flex border-b border-gray-800 bg-[#11141b]">
@@ -204,7 +203,7 @@ function IntroWizardContent() {
                                         <div className="p-2 bg-blue-500/10 rounded-lg">
                                             <Tag className="text-blue-400 w-5 h-5" />
                                         </div>
-                                        <p className="text-sm text-blue-100/70">Share link with founder to submit details</p>
+                                        <p className="text-sm text-blue-100/70">Share this link with founders to get their startup details</p>
                                     </div>
                                     <div className="flex items-center gap-2 bg-black/40 p-1 rounded-xl border border-white/5 w-full md:w-auto">
                                         <code className="text-blue-400 px-3 text-xs font-mono">{shareUrl ? '...'+shareUrl.slice(-20) : "Loading..."}</code>
