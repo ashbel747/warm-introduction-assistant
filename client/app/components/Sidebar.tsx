@@ -5,11 +5,12 @@ import React, { useEffect, useState } from "react";
 import { AUTH_EVENT } from '@/app/lib/auth-events';
 import { getFounderProfile } from "../lib/founder-api";
 import { 
-  Users, Rocket, Wand2, ListOrdered, 
+  Users, Wand2, ListOrdered, 
   Settings, LogOut, ChevronLeft, ChevronRight,
   Info, LayoutGrid,
   Zap,
-  Bell
+  Bell,
+  Activity
 } from "lucide-react";
 import Image from "next/image";
 
@@ -21,7 +22,7 @@ interface SidebarProps {
 
 const menu = [
   { href: "/dashboard", label: "My Dashboard", icon: LayoutGrid},
-  { href: "/startups", label: "Founder requests", icon: Rocket },
+  { href: "/startups", label: "Founder requests", icon: Activity },
   { href: "/investors", label: "Investor network", icon: Users },
   { href: "/intro-wizard", label: "Intro Wizard", icon: Wand2 },
   { href: "/intro-queue", label: "Intro Queue", icon: ListOrdered },
@@ -96,9 +97,12 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed, isMobile
           </button>
 
         <div className="overflow-y-auto px-4 custom-scrollbar">
-          {!isCollapsed && (
             <div className="px-3 mb-8">
-              <Link href="/" className="flex items-center no-underline">
+              <Link 
+                href="/" 
+                className={`flex items-center no-underline
+                  ${isCollapsed ? "justify-center invisible pointer-events-none" : "justify-start"}`}
+              >
                 <Image
                   src="/logo.png"
                   alt="Logo"
@@ -107,9 +111,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed, isMobile
                   className="sm:w-[55px] sm:h-[55px]"
                 />
               </Link>
-              <div className="h-1px bg-white/10 mt-4"></div>
             </div>
-          )}
 
           <nav>
             <ul className="space-y-1 list-none p-0 m-0">
@@ -153,7 +155,7 @@ const Sidebar: React.FC<SidebarProps> = ({ isCollapsed, setIsCollapsed, isMobile
               {userTier === 'trial' && (
                 <Link 
                   href="/pricing"
-                  className="flex items-center gap-2 text-xs font-bold text-amber-500 bg-amber-500/10 hover:opacity-95 px-3 py-1 rounded-full border border-amber-500/20"
+                  className="flex items-center gap-2 text-xs font-bold text-blue-500 bg-blue-500/10 hover:opacity-95 px-3 py-1 rounded-full border border-blue-500/20"
                 >
                   Upgrade
                 </Link>
