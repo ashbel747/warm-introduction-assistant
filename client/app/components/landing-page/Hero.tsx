@@ -77,6 +77,10 @@ const Hero = () => {
             className="text-lg md:text-[21px] text-slate-400/80 mb-12 max-w-xl min-h-[60px] leading-relaxed font-light tracking-wide"
             style={getRevealStyle(0.6)}
           >
+            <span className="sr-only">
+              The connector tool for community owners. Receive startup requests, match founders with your investor network, and generate AI-crafted warm introductions.
+            </span>
+
             <Typewriter
               options={{ delay: 30, cursor: '|' }}
               onInit={(typewriter) => {
@@ -119,7 +123,7 @@ const Hero = () => {
           <div className="relative w-[125%] h-[600px] translate-x-10 z-10 hidden lg:block">
             <Image
               src="/public-network.jpeg"
-              alt="People network"
+              alt="AI-powered investor and founder connector platform"
               fill
               priority
               quality={100}
