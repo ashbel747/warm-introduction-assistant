@@ -114,7 +114,7 @@ const Hero = () => {
         </div>
 
         {/* === RIGHT COLUMN === */}
-        <div className="md:w-[45%] w-full flex justify-end items-center relative min-h-[600px]">
+        <div className="hidden md:flex md:w-[45%] w-full justify-end items-center relative min-h-[600px]">
           <div className="absolute inset-0 bg-transparent z-20 pointer-events-none" />
           <div className="relative w-[125%] h-[600px] translate-x-10 z-10 hidden lg:block">
             <Image
