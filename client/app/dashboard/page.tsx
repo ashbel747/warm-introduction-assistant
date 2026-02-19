@@ -59,6 +59,8 @@ export default function DashboardPage() {
     const [trialStatus, setTrialStatus] = useState<TrialStatus | null>(null);
     const [shareUrl, setShareUrl] = useState("");
     const [copied, setCopied] = useState(false);
+    const [pendingId, setPendingId] = useState<String | null>(null);
+    const [isSubmitting, setIsSubmitting] = useState(false);
 
     const loadDashboardData = async () => {
         try {
@@ -119,15 +121,23 @@ export default function DashboardPage() {
     };
 
     const handleMarkAsDone = async (reminder: Reminder) => {
+        if (pendingId !== reminder._id) {
+            setPendingId(reminder._id);
+            return;
+        }
+
+        if (isSubmitting) return;
+
+        setIsSubmitting(true);
         try {
-            setProcessingId(reminder._id);
             await markReminderCompleted(reminder._id);
-            showToast('Reminder completed', 'success');
+            showToast('Follow-up marked as completed', 'success');
             await loadDashboardData();
+            setPendingId(null);
         } catch (err) {
             showToast('Update failed', 'error');
         } finally {
-            setProcessingId(null);
+            setIsSubmitting(false);
         }
     };
 
@@ -227,25 +237,51 @@ export default function DashboardPage() {
                                 );
                             }
 
-                            // 3. Otherwise, map through the reminders
                             return activeReminders.map(reminder => (
-                                <div key={reminder._id} className="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 border border-slate-800/50 group hover:border-indigo-500/30 transition-all">
-                                <div className="flex items-center gap-4">
-                                    <button 
-                                    onClick={() => handleMarkAsDone(reminder)}
-                                    className="w-5 h-5 rounded-md border-2 border-slate-600 group-hover:border-indigo-500 flex items-center justify-center"
-                                    >
-                                    <Check size={14} className="text-indigo-500 scale-0 group-hover:scale-100 transition-transform" />
-                                    </button>
-                                    <div className="min-w-0">
-                                    <p className="text-sm font-medium text-slate-200 truncate">{reminder.investorName}</p>
-                                    <p className="text-[11px] text-slate-500">Follow up due</p>
+                                <Link
+                                    key={reminder._id}
+                                    href={`/reminders`}
+                                    className='block'
+                                >
+                                    <div key={reminder._id} className="flex items-center justify-between p-3 rounded-xl bg-slate-900/40 border border-slate-800/50 group hover:border-white/30 transition-all">
+                                    <div className="flex items-center gap-4">
+                                        <button 
+                                            onClick={(e) => {
+                                                e.preventDefault();
+                                                e.stopPropagation();
+                                                handleMarkAsDone(reminder);
+                                            }}
+                                            disabled={isSubmitting && pendingId === reminder._id}
+                                            className={`
+                                                flex items-center justify-center rounded-md border transition-all duration-200 font-bold text-[10px]
+                                                ${pendingId === reminder._id 
+                                                    ? 'w-auto px-3 h-7 bg-blue-600 border-blue-600 text-white'
+                                                    : 'w-6 h-6 bg-transparent border-slate-700 group-hover:border-blue-500'
+                                                } 
+                                                ${isSubmitting && pendingId === reminder._id ? 'opacity-50 cursor-not-allowed' : 'cursor-pointer'}
+                                            `}
+                                        >
+                                            {pendingId === reminder._id ? (
+                                                <span className="whitespace-nowrap uppercase tracking-wider">
+                                                    {isSubmitting ? 'Saving...' : 'Confirm?'}
+                                                </span>
+                                            ) : (
+                                                <Check 
+                                                    size={14} 
+                                                    className="opacity-0 hover:opacity-100 text-blue-500 transition-opacity duration-200" 
+                                                />
+                                            )}
+                                        </button>
+                                        <div className="min-w-0">
+                                            <p className="text-sm sm:text-xs font-medium text-slate-200 truncate">Follow up on intro regarding {reminder.startupName}</p>
+                                            <p className="text-[11px] text-slate-500">Due Date</p>
+                                        </div>
                                     </div>
-                                </div>
-                                <span className="text-[10px] font-bold text-slate-500">
-                                    {new Date(reminder.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
-                                </span>
-                                </div>
+                                    <span className="text-[10px] font-bold text-slate-500">
+                                        {new Date(reminder.date).toLocaleDateString(undefined, { month: 'short', day: 'numeric' })}
+                                    </span>
+                                    </div>
+                                </Link>
                             ));
                             })()}
                         </div>
