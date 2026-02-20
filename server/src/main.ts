@@ -5,20 +5,17 @@ import { Connection } from 'mongoose';
 import { getConnectionToken } from '@nestjs/mongoose';
 
 async function bootstrap() {
-  const app = await NestFactory.create(AppModule);
+  const app = await NestFactory.create(AppModule, { rawBody: true });
 
-  // Enable validation
   app.useGlobalPipes(new ValidationPipe());
 
-  // Enable CORS for frontend
   app.enableCors({
     origin: [
-      'http://localhost:3000',         // for local development
-      'https://warmly-intro-assistant.vercel.app', // for production
+      'http://localhost:3000',
+      'https://warmly-intro-assistant.vercel.app',
     ],
   });                                     
                                                                        
-  // mongoose connection events logging
   const connection = app.get<Connection>(getConnectionToken());
 
   if (connection.readyState === 1) {
@@ -37,7 +34,7 @@ async function bootstrap() {
     Logger.warn('⚠️ MongoDB disconnected', 'Database');
   });
 
-  await app.listen(process.env.PORT ?? 4000);
+  await app.listen(process.env.PORT ?? 4000, '0.0.0.0');
 }
 
 bootstrap().catch(error => {

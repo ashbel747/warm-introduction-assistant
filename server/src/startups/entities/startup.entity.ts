@@ -8,14 +8,30 @@ export class Startup {
     @Prop({ required:true })
     name:string;
 
+    @Prop({ required: true })
+    founderName: string;
+
+    @Prop({ required: true })
+    founderEmail: string;
+
     @Prop({ required:true })
     blurb:string;
 
     @Prop()
     pitchLink: string;
 
+    @Prop({ type: [String], default: [] })
+    tags: string[];
+
     @Prop({ type: Types.ObjectId, ref:'Founder', required:true })
     founderId:Types.ObjectId;
+
+    @Prop({
+        type: String,
+        enum: ['pending', 'done'],
+        default: 'pending'
+    })
+    status: string;
 }
 
 export const StartupSchema = SchemaFactory.createForClass(Startup);
